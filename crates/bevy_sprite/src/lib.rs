@@ -127,7 +127,7 @@ impl Plugin for SpritePlugin {
 
 /// System calculating and inserting an [`Aabb`] component to entities with either:
 /// - a `Mesh2dHandle` component,
-/// - a `Sprite` and `Handle<Image>` components,
+/// - a `Sprite` component,
 /// and without a [`NoFrustumCulling`] component.
 ///
 /// Used in system set [`VisibilitySystems::CalculateBounds`].
@@ -138,7 +138,7 @@ pub fn calculate_bounds_2d(
     atlases: Res<Assets<TextureAtlasLayout>>,
     meshes_without_aabb: Query<(Entity, &Mesh2dHandle), (Without<Aabb>, Without<NoFrustumCulling>)>,
     sprites_to_recalculate_aabb: Query<
-        (Entity, &Sprite, &Handle<Image>, Option<&TextureAtlas>),
+        (Entity, &Sprite, Option<&TextureAtlas>),
         (
             Or<(Without<Aabb>, Changed<Sprite>, Changed<TextureAtlas>)>,
             Without<NoFrustumCulling>,
@@ -152,10 +152,10 @@ pub fn calculate_bounds_2d(
             }
         }
     }
-    for (entity, sprite, texture_handle, atlas) in &sprites_to_recalculate_aabb {
+    for (entity, sprite, atlas) in &sprites_to_recalculate_aabb {
         if let Some(size) = sprite.custom_size.or_else(|| match atlas {
             // We default to the texture size for regular sprites
-            None => images.get(texture_handle).map(|image| image.size_f32()),
+            None => images.get(&sprite.texture).map(|image| image.size_f32()),
             // We default to the drawn rect for atlas sprites
             Some(atlas) => atlas
                 .texture_rect(&atlases)
@@ -236,13 +236,11 @@ mod test {
         // Add entities
         let entity = app
             .world
-            .spawn((
-                Sprite {
-                    custom_size: Some(Vec2::ZERO),
-                    ..default()
-                },
-                image_handle,
-            ))
+            .spawn(Sprite {
+                texture: image_handle,
+                custom_size: Some(Vec2::ZERO),
+                ..default()
+            })
             .id();
 
         // Create initial AABB

@@ -20,20 +20,20 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     // Spawn a root entity with no parent
     let parent = commands
         .spawn(SpriteBundle {
+            sprite: texture.clone().into(),
             transform: Transform::from_scale(Vec3::splat(0.75)),
-            texture: texture.clone(),
             ..default()
         })
         // With that entity as a parent, run a lambda that spawns its children
         .with_children(|parent| {
             // parent is a ChildBuilder, which has a similar API to Commands
             parent.spawn(SpriteBundle {
-                transform: Transform::from_xyz(250.0, 0.0, 0.0).with_scale(Vec3::splat(0.75)),
-                texture: texture.clone(),
                 sprite: Sprite {
+                    texture: texture.clone(),
                     color: BLUE.into(),
                     ..default()
                 },
+                transform: Transform::from_xyz(250.0, 0.0, 0.0).with_scale(Vec3::splat(0.75)),
                 ..default()
             });
         })
@@ -44,12 +44,12 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     // entity has already been spawned.
     let child = commands
         .spawn(SpriteBundle {
-            transform: Transform::from_xyz(0.0, 250.0, 0.0).with_scale(Vec3::splat(0.75)),
-            texture,
             sprite: Sprite {
+                texture,
                 color: GREEN.into(),
                 ..default()
             },
+            transform: Transform::from_xyz(0.0, 250.0, 0.0).with_scale(Vec3::splat(0.75)),
             ..default()
         })
         .id();

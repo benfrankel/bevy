@@ -112,12 +112,12 @@ fn setup_contributor_selection(mut commands: Commands, asset_server: Res<AssetSe
                 },
                 SpriteBundle {
                     sprite: Sprite {
-                        custom_size: Some(Vec2::splat(SPRITE_SIZE)),
+                        texture: texture_handle.clone(),
                         color: DESELECTED.with_hue(hue).into(),
                         flip_x: flipped,
+                        custom_size: Some(Vec2::splat(SPRITE_SIZE)),
                         ..default()
                     },
-                    texture: texture_handle.clone(),
                     transform,
                     ..default()
                 },

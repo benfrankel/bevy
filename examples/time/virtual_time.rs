@@ -54,7 +54,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut time: ResMu
     // the sprite moving based on real time
     commands.spawn((
         SpriteBundle {
-            texture: texture_handle.clone(),
+            sprite: texture_handle.clone().into(),
             transform: Transform::from_scale(sprite_scale),
             ..default()
         },
@@ -64,8 +64,8 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>, mut time: ResMu
     // the sprite moving based on virtual time
     commands.spawn((
         SpriteBundle {
-            texture: texture_handle,
             sprite: Sprite {
+                texture: texture_handle,
                 color: virtual_color,
                 ..default()
             },

@@ -402,13 +402,16 @@ fn spawn_birds(
                     };
                     (
                         SpriteBundle {
-                            texture: bird_resources
-                                .textures
-                                .choose(&mut bird_resources.material_rng)
-                                .unwrap()
-                                .clone(),
+                            sprite: Sprite {
+                                texture: bird_resources
+                                    .textures
+                                    .choose(&mut bird_resources.material_rng)
+                                    .unwrap()
+                                    .clone(),
+                                color,
+                                ..default()
+                            },
                             transform,
-                            sprite: Sprite { color, ..default() },
                             ..default()
                         },
                         Bird { velocity },

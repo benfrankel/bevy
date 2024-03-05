@@ -1,7 +1,9 @@
+use bevy_asset::Handle;
 use bevy_color::Color;
 use bevy_ecs::{component::Component, reflect::ReflectComponent};
 use bevy_math::{Rect, Vec2};
 use bevy_reflect::{std_traits::ReflectDefault, Reflect};
+use bevy_render::texture::Image;
 
 use crate::TextureSlicer;
 
@@ -12,6 +14,8 @@ use crate::TextureSlicer;
 #[reflect(Component, Default)]
 #[repr(C)]
 pub struct Sprite {
+    /// Handle to the texture
+    pub texture: Handle<Image>,
     /// The sprite's color tint
     pub color: Color,
     /// Flip the sprite along the `X` axis
@@ -29,6 +33,63 @@ pub struct Sprite {
     pub rect: Option<Rect>,
     /// [`Anchor`] point of the sprite in the world
     pub anchor: Anchor,
+}
+
+impl Sprite {
+    pub fn new(texture: Handle<Image>) -> Self {
+        Self {
+            texture,
+            ..Default::default()
+        }
+    }
+
+    /// Set the color tint
+    #[must_use]
+    pub const fn with_color(mut self, color: Color) -> Self {
+        self.color = color;
+        self
+    }
+
+    /// Flip the image along its x-axis
+    #[must_use]
+    pub const fn with_flip_x(mut self) -> Self {
+        self.flip_x = true;
+        self
+    }
+
+    /// Flip the image along its y-axis
+    #[must_use]
+    pub const fn with_flip_y(mut self) -> Self {
+        self.flip_y = true;
+        self
+    }
+
+    /// Set a custom size
+    #[must_use]
+    pub const fn with_custom_size(mut self, size: Vec2) -> Self {
+        self.custom_size = Some(size);
+        self
+    }
+
+    /// Set a sub-region of the image to render
+    #[must_use]
+    pub const fn with_rect(mut self, rect: Rect) -> Self {
+        self.rect = Some(rect);
+        self
+    }
+
+    /// Set an [`Anchor`] point
+    #[must_use]
+    pub const fn with_anchor(mut self, anchor: Anchor) -> Self {
+        self.anchor = anchor;
+        self
+    }
+}
+
+impl From<Handle<Image>> for Sprite {
+    fn from(texture: Handle<Image>) -> Self {
+        Self::new(texture)
+    }
 }
 
 /// Controls how the image is altered when scaled.

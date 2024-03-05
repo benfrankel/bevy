@@ -55,7 +55,7 @@ fn setup_sprite(mut commands: Commands, asset_server: Res<AssetServer>) {
     // the sample sprite that will be rendered to the pixel-perfect canvas
     commands.spawn((
         SpriteBundle {
-            texture: asset_server.load("pixel/bevy_pixel_dark.png"),
+            sprite: asset_server.load("pixel/bevy_pixel_dark.png").into(),
             transform: Transform::from_xyz(-40., 20., 2.),
             ..default()
         },
@@ -66,7 +66,7 @@ fn setup_sprite(mut commands: Commands, asset_server: Res<AssetServer>) {
     // the sample sprite that will be rendered to the high-res "outer world"
     commands.spawn((
         SpriteBundle {
-            texture: asset_server.load("pixel/bevy_pixel_light.png"),
+            sprite: asset_server.load("pixel/bevy_pixel_light.png").into(),
             transform: Transform::from_xyz(-40., -20., 2.),
             ..default()
         },
@@ -138,14 +138,7 @@ fn setup_camera(mut commands: Commands, mut images: ResMut<Assets<Image>>) {
     ));
 
     // spawn the canvas
-    commands.spawn((
-        SpriteBundle {
-            texture: image_handle,
-            ..default()
-        },
-        Canvas,
-        HIGH_RES_LAYERS,
-    ));
+    commands.spawn((SpriteBundle::from(image_handle), Canvas, HIGH_RES_LAYERS));
 
     // the "outer" camera renders whatever is on `HIGH_RES_LAYERS` to the screen.
     // here, the canvas and one of the sample sprites will be rendered by this camera

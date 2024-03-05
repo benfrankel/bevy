@@ -46,8 +46,5 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         "embedded://embedded_asset/bevy_pixel_light.png".into()
     );
 
-    commands.spawn(SpriteBundle {
-        texture: asset_server.load(asset_path),
-        ..default()
-    });
+    commands.spawn(SpriteBundle::from(asset_server.load(asset_path)));
 }

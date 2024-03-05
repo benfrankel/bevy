@@ -85,15 +85,15 @@ fn setup(
 
             commands.spawn((
                 SpriteBundle {
-                    texture: texture_handle.clone(),
+                    sprite: Sprite {
+                        texture: texture_handle.clone(),
+                        custom_size: Some(tile_size),
+                        ..default()
+                    },
                     transform: Transform {
                         translation,
                         rotation,
                         scale,
-                    },
-                    sprite: Sprite {
-                        custom_size: Some(tile_size),
-                        ..default()
                     },
                     ..default()
                 },

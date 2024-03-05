@@ -15,26 +15,23 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     let sprite_handle = asset_server.load("branding/icon.png");
 
-    commands.spawn(SpriteBundle {
-        texture: sprite_handle.clone(),
-        ..default()
-    });
+    commands.spawn(SpriteBundle::from(sprite_handle.clone()));
     commands.spawn(SpriteBundle {
         sprite: Sprite {
+            texture: sprite_handle.clone(),
             // Alpha channel of the color controls transparency.
             color: Color::srgba(0.0, 0.0, 1.0, 0.7),
             ..default()
         },
-        texture: sprite_handle.clone(),
         transform: Transform::from_xyz(100.0, 0.0, 0.0),
         ..default()
     });
     commands.spawn(SpriteBundle {
         sprite: Sprite {
+            texture: sprite_handle,
             color: Color::srgba(0.0, 1.0, 0.0, 0.3),
             ..default()
         },
-        texture: sprite_handle,
         transform: Transform::from_xyz(200.0, 0.0, 0.0),
         ..default()
     });

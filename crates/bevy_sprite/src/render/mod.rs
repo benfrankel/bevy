@@ -4,7 +4,7 @@ use crate::{
     texture_atlas::{TextureAtlas, TextureAtlasLayout},
     ComputedTextureSlices, Sprite, SPRITE_SHADER_HANDLE,
 };
-use bevy_asset::{AssetEvent, AssetId, Assets, Handle};
+use bevy_asset::{AssetEvent, AssetId, Assets};
 use bevy_color::LinearRgba;
 use bevy_core_pipeline::{
     core_2d::Transparent2d,
@@ -343,14 +343,13 @@ pub fn extract_sprites(
             &ViewVisibility,
             &Sprite,
             &GlobalTransform,
-            &Handle<Image>,
             Option<&TextureAtlas>,
             Option<&ComputedTextureSlices>,
         )>,
     >,
 ) {
     extracted_sprites.sprites.clear();
-    for (entity, view_visibility, sprite, transform, handle, sheet, slices) in sprite_query.iter() {
+    for (entity, view_visibility, sprite, transform, sheet, slices) in sprite_query.iter() {
         if !view_visibility.get() {
             continue;
         }
@@ -358,7 +357,7 @@ pub fn extract_sprites(
         if let Some(slices) = slices {
             extracted_sprites.sprites.extend(
                 slices
-                    .extract_sprites(transform, entity, sprite, handle)
+                    .extract_sprites(transform, entity, sprite)
                     .map(|e| (commands.spawn_empty().id(), e)),
             );
         } else {
@@ -386,7 +385,7 @@ pub fn extract_sprites(
                     custom_size: sprite.custom_size,
                     flip_x: sprite.flip_x,
                     flip_y: sprite.flip_y,
-                    image_handle_id: handle.id(),
+                    image_handle_id: sprite.texture.id(),
                     anchor: sprite.anchor.as_vec(),
                     original_entity: None,
                 },

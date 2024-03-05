@@ -14,7 +14,7 @@ fn spawn_system(mut commands: Commands, asset_server: Res<AssetServer>) {
     for _ in 0..128 {
         commands.spawn((
             SpriteBundle {
-                texture: texture.clone(),
+                sprite: texture.clone().into(),
                 transform: Transform::from_scale(Vec3::splat(0.1)),
                 ..default()
             },

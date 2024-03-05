@@ -121,18 +121,18 @@ fn decompress<A: Asset>(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut compressed_assets: ResMut<Assets<GzAsset>>,
-    query: Query<(Entity, &Compressed<A>)>,
+    query: Query<(Entity, &Compressed<A>, &mut Sprite)>,
 ) {
-    for (entity, Compressed { compressed, .. }) in query.iter() {
+    for (entity, Compressed { compressed, .. }, mut sprite) in &mut query {
         let Some(GzAsset { uncompressed }) = compressed_assets.remove(compressed) else {
             continue;
         };
 
+        commands.entity(entity).remove::<Compressed<A>>();
         let uncompressed = uncompressed.take::<A>().unwrap();
+        sprite.texture = asset_server.add(uncompressed);
 
-        commands
-            .entity(entity)
-            .remove::<Compressed<A>>()
-            .insert(asset_server.add(uncompressed));
+        // TODO: This was a generic system replacing Compressed<A> components with Handle<A>.
+        // Used for A: Image and expecting that Sprite will see and use the new Handle<Image>...
     }
 }

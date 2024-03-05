@@ -98,7 +98,7 @@ fn setup(
 
     // draw unpadded texture atlas
     commands.spawn(SpriteBundle {
-        texture: linear_texture.clone(),
+        sprite: linear_texture.clone().into(),
         transform: Transform {
             translation: Vec3::new(-250.0, -130.0, 0.0),
             scale: Vec3::splat(0.8),
@@ -109,7 +109,7 @@ fn setup(
 
     // draw padded texture atlas
     commands.spawn(SpriteBundle {
-        texture: linear_padded_texture.clone(),
+        sprite: linear_padded_texture.clone().into(),
         transform: Transform {
             translation: Vec3::new(250.0, -130.0, 0.0),
             scale: Vec3::splat(0.8),
@@ -242,12 +242,12 @@ fn create_sprite_from_atlas(
 ) {
     commands.spawn((
         SpriteBundle {
+            sprite: texture.into(),
             transform: Transform {
                 translation: Vec3::new(translation.0, translation.1, translation.2),
                 scale: Vec3::splat(3.0),
                 ..default()
             },
-            texture,
             ..default()
         },
         TextureAtlas {

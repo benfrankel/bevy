@@ -49,8 +49,8 @@ fn setup(
     commands.spawn(Camera2dBundle::default());
     commands.spawn((
         SpriteBundle {
+            sprite: texture.into(),
             transform: Transform::from_scale(Vec3::splat(6.0)),
-            texture,
             ..default()
         },
         TextureAtlas {
