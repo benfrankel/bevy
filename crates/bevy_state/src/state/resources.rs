@@ -1,7 +1,7 @@
 use std::ops::Deref;
 
 use bevy_ecs::{
-    system::Resource,
+    system::{Res, ResMut, Resource, SystemParam},
     world::{FromWorld, World},
 };
 
@@ -85,6 +85,8 @@ impl<S: States> Deref for State<S> {
 /// The next state of [`State<S>`].
 ///
 /// To queue a transition, just set the contained value to `Some(next_state)`.
+/// This can even queue a transition from the current state to itself. Use [`ChangeState<S>`] if
+/// you want to check the current state first.
 ///
 /// Note that these transitions can be overridden by other systems:
 /// only the actual value of this resource at the time of [`apply_state_transition`](crate::state::apply_state_transition) matters.
@@ -120,7 +122,7 @@ pub enum NextState<S: FreelyMutableState> {
 }
 
 impl<S: FreelyMutableState> NextState<S> {
-    /// Tentatively set a pending state transition to `Some(state)`.
+    /// Tentatively set a pending state transition to `state`.
     pub fn set(&mut self, state: S) {
         *self = Self::Pending(state);
     }
@@ -128,5 +130,31 @@ impl<S: FreelyMutableState> NextState<S> {
     /// Remove any pending changes to [`State<S>`]
     pub fn reset(&mut self) {
         *self = Self::Unchanged;
+    }
+}
+
+/// A [`SystemParam`] for setting the next state depending on the current state.
+#[derive(SystemParam)]
+pub struct ChangeState<'w, S: FreelyMutableState> {
+    /// The current state.
+    pub current: Res<'w, State<S>>,
+    /// The next state.
+    pub next: ResMut<'w, NextState<S>>,
+}
+
+impl<'w, S: FreelyMutableState> ChangeState<'w, S> {
+    /// Tentatively set a planned state transition to `state`, or no transition if that's already
+    /// the current state.
+    pub fn change(&mut self, state: S) {
+        *self.next = if state != self.current.0 {
+            NextState::Pending(state)
+        } else {
+            NextState::Unchanged
+        }
+    }
+
+    /// Tentatively set a planned state transition from the current state to itself.
+    pub fn refresh(&mut self) {
+        self.next.set(self.current.0.clone());
     }
 }
